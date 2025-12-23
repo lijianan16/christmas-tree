@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=ai_studio_code.html">
+    <title>魔法圣诞树 - 正在加载...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #d4af37;
+            font-family: 'Times New Roman', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 2px solid transparent;
+            border-top: 2px solid #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        a {
+            color: #d4af37;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner"></div>
+    <div>正在加载魔法圣诞树...</div>
+    <a href="ai_studio_code.html">如果页面没有自动跳转，请点击这里</a>
+    <script>
+        // 如果 3 秒后还没跳转，自动跳转
+        setTimeout(function() {
+            window.location.href = 'ai_studio_code.html';
+        }, 3000);
+    </script>
+</body>
+</html>
+
