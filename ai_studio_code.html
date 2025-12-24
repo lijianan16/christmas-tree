@@ -595,7 +595,9 @@
                 // 全屏按钮点击事件
                 const fullscreenBtn = document.getElementById('fullscreen-btn');
                 if (fullscreenBtn) {
-                    fullscreenBtn.addEventListener('click', () => {
+                    fullscreenBtn.addEventListener('click', (e) => {
+                        e.preventDefault(); // 阻止默认行为
+                        e.stopPropagation(); // 阻止事件冒泡
                         this.toggleFullscreen();
                     });
                 }
@@ -623,25 +625,41 @@
                     !document.mozFullScreenElement && 
                     !document.msFullscreenElement) {
                     // 进入全屏
+                    let promise;
                     if (elem.requestFullscreen) {
-                        elem.requestFullscreen();
+                        promise = elem.requestFullscreen();
                     } else if (elem.webkitRequestFullscreen) {
-                        elem.webkitRequestFullscreen();
+                        promise = elem.webkitRequestFullscreen();
                     } else if (elem.mozRequestFullScreen) {
-                        elem.mozRequestFullScreen();
+                        promise = elem.mozRequestFullScreen();
                     } else if (elem.msRequestFullscreen) {
-                        elem.msRequestFullscreen();
+                        promise = elem.msRequestFullscreen();
+                    }
+                    
+                    // 处理 Promise（如果有）
+                    if (promise) {
+                        promise.catch(err => {
+                            console.warn('全屏请求失败:', err);
+                        });
                     }
                 } else {
                     // 退出全屏
+                    let promise;
                     if (document.exitFullscreen) {
-                        document.exitFullscreen();
+                        promise = document.exitFullscreen();
                     } else if (document.webkitExitFullscreen) {
-                        document.webkitExitFullscreen();
+                        promise = document.webkitExitFullscreen();
                     } else if (document.mozCancelFullScreen) {
-                        document.mozCancelFullScreen();
+                        promise = document.mozCancelFullScreen();
                     } else if (document.msExitFullscreen) {
-                        document.msExitFullscreen();
+                        promise = document.msExitFullscreen();
+                    }
+                    
+                    // 处理 Promise（如果有）
+                    if (promise) {
+                        promise.catch(err => {
+                            console.warn('退出全屏失败:', err);
+                        });
                     }
                 }
             }
@@ -862,14 +880,31 @@
         }
 
         // Initialize App
-        new ChristmasEngine();
+        const engine = new ChristmasEngine();
 
-        // Resize handling
+        // Resize handling - 更新渲染器尺寸而不是重新加载页面
         window.addEventListener('resize', () => {
             const w = window.innerWidth;
             const h = window.innerHeight;
-            // Accessing internal renderer of the instance would be better, but for single file we can just refresh or globalize
-            location.reload(); 
+            
+            // 更新相机宽高比
+            if (engine.camera) {
+                engine.camera.aspect = w / h;
+                engine.camera.updateProjectionMatrix();
+            }
+            
+            // 更新渲染器尺寸
+            if (engine.renderer) {
+                engine.renderer.setSize(w, h);
+            }
+            
+            // 更新后处理效果尺寸
+            if (engine.composer) {
+                engine.composer.setSize(w, h);
+                if (engine.bloomPass) {
+                    engine.bloomPass.setSize(w, h);
+                }
+            }
         });
     </script>
 </body>
